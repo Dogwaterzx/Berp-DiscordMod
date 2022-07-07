@@ -110,12 +110,12 @@ class examplePlugin {
             const xuid = data.profileUsers[0].id
           if(!interaction.member.roles.cache.some(r => r.permissions.includes("ADMINISTATOR"))) return interaction.reply({ content: `You don't have the permissions to run this!`, ephemeral: true })
           interaction.reply({ content: `${interaction.options.getString('gamertag')} has been Whitelisted!`, ephemeral: true })
-          fs.readFile('./plugins/discordmod/whitelist.json', 'utf8', (err,data)=>{
+          fs.readFile('./plugins/Berp-DiscordMod-main/whitelist.json', 'utf8', (err,data)=>{
             var obj = JSON.parse(data)
             if(obj.includes(xuid)) return
             obj.push(xuid)
             var json = JSON.stringify(obj)
-            fs.writeFile('./plugins/discordmod/whitelist.json', json,err =>{
+            fs.writeFile('./plugins/Berp-DiscordMod-main/whitelist.json', json,err =>{
               if(err) {
                 console.log(err)
                 return
@@ -137,7 +137,7 @@ class examplePlugin {
             })
             const xuid = data.profileUsers[0].id
           if(interaction.options.getString('gamertag') == undefined) return interaction.reply(`Could not find user "${interaction.options.getString('gamertag')}"!`)
-          fs.readFile('./plugins/discordmod/whitelist.json', 'utf8', (err,data)=>{
+          fs.readFile('./plugins/Berp-DiscordMod-main/whitelist.json', 'utf8', (err,data)=>{
             if(err) return interaction.reply("Could not read whitelist list! An unexpected error occurred! Try again.")
             var obj = JSON.parse(data)
             if(!obj.includes(xuid)) return interaction.reply(`User isn't whitelisted yet!`)
@@ -145,7 +145,7 @@ class examplePlugin {
               if(obj[i].includes(xuid)) obj.splice(i, 1)
             }
             var json = JSON.stringify(obj)
-            fs.writeFile('./plugins/discordmod/whitelist.json', json,err =>{
+            fs.writeFile('./plugins/Berp-DiscordMod-main/whitelist.json', json,err =>{
               if(err) {
                 console.log(err)
                 return interaction.reply("Unexpected error when trying to remove from whitelist!")
@@ -165,7 +165,7 @@ class examplePlugin {
         }
   public automod(p: Player): void {
     if(!MOD) return;
-    fs.readFile(path.resolve('./plugins/discordmod/whitelist.json'), 'utf8',  async (err,data)=>{
+    fs.readFile(path.resolve('./plugins/Berp-DiscordMod-main/whitelist.json'), 'utf8',  async (err,data)=>{
       if(!data || err) return console.log(err);
       if(data.includes(p.getXuid())) return 
 
