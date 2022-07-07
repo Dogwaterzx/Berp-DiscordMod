@@ -1,0 +1,10 @@
+{
+    "MOD": false,
+    "DISCORD":true,
+    "REALMCHATID": "Channel Id For Realm-discord bridge",
+    "TOKEN": "Discord Bot Token", 
+    "CLIENTID":"Discord Bot Client ID",
+    "GUILDID":"Guild ID For Whitelist Commands",
+    "BANNED": ["Windows", "Android"],
+    "LOGID":"Channel Id For AutoMod Logs" 
+}
