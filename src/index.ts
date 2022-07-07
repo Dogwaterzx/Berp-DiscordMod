@@ -7,7 +7,7 @@ import axios from 'axios'
 const fs = require('fs')
 const { TOKEN, REALMCHATID, BANNED, LOGID, MOD, DISCORD } = require('../config.json');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-client.login(TOKEN)
+if(DISCORD) {client.login(TOKEN)}
 
 class examplePlugin {
     private api: PluginApi
@@ -187,6 +187,7 @@ class examplePlugin {
   }
   public kickplayer(p: Player, r: string): void{
 this.api.getCommandManager().executeCommand(`Kick "${p.getXuid()}" ${r}`)
+      if(!DISCORD) return;
 const AUTOMODLOG = new MessageEmbed()
 .setTimestamp()
 .setColor(`#ff0000`)
