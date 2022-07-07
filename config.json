@@ -5,6 +5,6 @@
     "TOKEN": "Discord Bot Token", 
     "CLIENTID":"Discord Bot Client ID",
     "GUILDID":"Guild ID For Whitelist Commands",
-    "BANNED": ["Windows", "Android"],
+    "BANNED": ["Windows", "Android","Unknown"],
     "LOGID":"Channel Id For AutoMod Logs" 
 }
