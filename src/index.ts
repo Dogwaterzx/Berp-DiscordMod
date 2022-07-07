@@ -195,7 +195,7 @@ this.api.getCommandManager().executeCommand(`Kick "${p.getXuid()}" ${r}`)
 const AUTOMODLOG = new MessageEmbed()
 .setTimestamp()
 .setColor(`#ff0000`)
-.setDescription(`UserName:${p.getName()}\nXUID\n${p.getXuid()}\nDevice:${p.getDevice()}\nReason:${r}`)
+.setDescription(`UserName:${p.getName()}\nXUID:${p.getXuid()}\nDevice:${p.getDevice()}\nReason:${r}`)
 client.channels.fetch(LOGID).then(async channel => await channel.send({embeds: [AUTOMODLOG]})).catch();
   }
     public onDisabled(): void {
