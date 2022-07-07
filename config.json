@@ -1,5 +1,5 @@
 {
-    "MOD": false,
+    "MOD": true,
     "DISCORD":true,
     "REALMCHATID": "Channel Id For Realm-discord bridge",
     "TOKEN": "Discord Bot Token", 
