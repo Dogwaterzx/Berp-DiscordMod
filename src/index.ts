@@ -183,7 +183,9 @@ class examplePlugin {
         }
       }).then((res)=>{
         if(!res.data.titles[0]){this.kickplayer(p,`Account On Private`)} 
-      if(res.data.titles[0].name.includes(BANNED) || res.data.titles[1].name.includes(BANNED) || res.data.titles[2].name.includes(BANNED)){this.kickplayer(p,`Recently Played An illigal Device`)}
+      if(BANNED.includes(res.data.titles[0].name)){this.kickplayer(p,`Recently Played An illigal Device`)}
+      if(BANNED.includes(res.data.titles[1].name)){this.kickplayer(p,`Recently Played An illigal Device`)}
+      if(BANNED.includes(res.data.titles[2].name)){this.kickplayer(p,`Recently Played An illigal Device`)}
       if(!res.data.titles[0].name.includes(`Minecraft`)){this.kickplayer(p,`Xbox Api Says Your Not Playing Minecraft`)}
       })
   })
