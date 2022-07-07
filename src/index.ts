@@ -92,7 +92,7 @@ class examplePlugin {
     if(message.author.bot) return;
    if(message.channel.id == REALMCHATID){
     this.api.getLogger().info(`Discord ${message.author.username}: ${message.content}`)
-    this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"§l§3Discord [§l§9${message.author.username}]§r§f: ${message.content}\"}]}`)
+    this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"§l§3Discord §l§9[${message.author.username}]§r§f: ${message.content}\"}]}`)
    }
     })
 
