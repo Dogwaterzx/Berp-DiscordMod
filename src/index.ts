@@ -8,6 +8,10 @@ const fs = require('fs')
 const { TOKEN, REALMCHATID, BANNED, LOGID, MOD, DISCORD } = require('../config.json');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 if(DISCORD) {client.login(TOKEN)}
+process.on('uncaughtException',(e)=>{
+  console.log("BeRP attempted to crash but error was caught.")
+  console.log(e)
+})
 
 class examplePlugin {
     private api: PluginApi
