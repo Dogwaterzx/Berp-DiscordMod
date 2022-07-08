@@ -5,7 +5,7 @@ const { Client, Collection, Intents } = require('discord.js');
 const { Authflow } = require('prismarine-auth')
 import axios from 'axios'
 const fs = require('fs')
-const { TOKEN, REALMCHATID, BANNED, LOGID, MOD, DISCORD, REALMID, EMAIL } = require('../config.json');
+const { TOKEN, REALMCHATID, BANNED, LOGID, MOD, DISCORD, REALMID, EMAIL, GAMERSCOREMAX } = require('../config.json');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 if(DISCORD) {client.login(TOKEN)}
 process.on('uncaughtException',(e)=>{
@@ -86,14 +86,14 @@ class examplePlugin {
   })
       this.api.getEventManager().on(`PlayerMessage`,async (userMessage)=>{
         if(!DISCORD) return;
-        this.api.getLogger().info(`${userMessage.sender.getName()}: ${userMessage.message}`)
+        this.api.getLogger().info(`(REALM) ${userMessage.sender.getName()}: ${userMessage.message}`)
         client.channels.fetch(REALMCHATID).then(async channel => await channel.send(`${userMessage.sender.getName()}: ${userMessage.message}`)).catch();
       })
   client.on(`messageCreate`,(message)=>{
     if(!DISCORD) return;
     if(message.author.bot) return;
    if(message.channel.id == REALMCHATID){
-    this.api.getLogger().info(`Discord ${message.author.username}: ${message.content}`)
+    this.api.getLogger().info(`(Discord) ${message.author.username}: ${message.content}`)
     this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"Discord [${message.author.username}§f]: ${message.content}\"}]}`)
    }
     })
@@ -170,10 +170,19 @@ class examplePlugin {
         }
   public automod(p: Player): void {
     if(!MOD) return;
+    new Authflow('',`${this.api.path}\\auth`,{ relyingParty: 'http://xboxlive.com'}).getXboxToken().then(async (t)=>{
+      const GamerScore =  (await axios.get(`https://profile.xboxlive.com/users/xuid(${p.getXuid()})/profile/settings?settings=Gamerscore`, {
+        headers:{
+          'x-xbl-contract-version': '2',
+          'Authorization': `XBL3.0 x=${t.userHash};${t.XSTSToken}`,
+          "Accept-Language": "en-US"
+        }
+      })).data.profileUsers[0].settings[0].value
+      console.log(GamerScore)
     fs.readFile(path.resolve('./plugins/Berp-DiscordMod-main/whitelist.json'), 'utf8',  async (err,data)=>{
       if(!data || err) return console.log(err);
       if(data.includes(p.getXuid())) return 
-
+if(p.getName().length > 16){this.kickplayer(p,`Invald Gamertag`)}
     if(BANNED.includes(p.getDevice())){this.kickplayer(p,`AutoMod Violation`)}
     new Authflow('',`${this.api.path}\\auth`,{ relyingParty: 'http://xboxlive.com'}).getXboxToken().then((t)=>{
       axios.get(`https://titlehub.xboxlive.com/users/xuid(${p.getXuid()})/titles/titlehistory/decoration/scid,image,detail`, {
@@ -183,12 +192,15 @@ class examplePlugin {
           "Accept-Language": "en-US"
         }
       }).then((res)=>{
+        if(!res.data.title[0].type.includes(`Game`)){this.kickplayer(p,`MAJOR ERROR Recently Played Isnt Minecraft Game`)}
+        if(GamerScore < GAMERSCOREMAX){this.kickplayer(p,`Alt Account Detected Low Gamerscore`)}
         if(!res.data.titles[0]){this.kickplayer(p,`Account On Private`)} 
         if(BANNED.includes(res.data.titles[0].name.replace(new RegExp('Minecraft for ','g'),''))){this.kickplayer(p,`Recently Played An illigal Device`)}
         if(BANNED.includes(res.data.titles[0].name.replace(new RegExp('Minecraft for ','g'),''))){this.kickplayer(p,`Recently Played An illigal Device`)}
         if(BANNED.includes(res.data.titles[0].name.replace(new RegExp('Minecraft for ','g'),''))){this.kickplayer(p,`Recently Played An illigal Device`)}
       if(!res.data.titles[0].name.includes(`Minecraft`)){this.kickplayer(p,`Xbox Api Says Your Not Playing Minecraft`)}
       })
+    })
   })
 })
   }
