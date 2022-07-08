@@ -5,7 +5,7 @@ const { Client, Collection, Intents } = require('discord.js');
 const { Authflow } = require('prismarine-auth')
 import axios from 'axios'
 const fs = require('fs')
-const { TOKEN, REALMCHATID, BANNED, LOGID, MOD, DISCORD } = require('../config.json');
+const { TOKEN, REALMCHATID, BANNED, LOGID, MOD, DISCORD, REALMID, EMAIL } = require('../config.json');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 if(DISCORD) {client.login(TOKEN)}
 process.on('uncaughtException',(e)=>{
@@ -22,6 +22,8 @@ class examplePlugin {
 
     public onLoaded(): void {
       this.api.getLogger().info('Plugin loaded!')
+      this.api.autoConnect(EMAIL,REALMID)
+        this.api.autoReconnect(EMAIL,REALMID)
     }
     public onEnabled(): void {
       this.api.getLogger().info('Plugin enabled!')
@@ -92,7 +94,7 @@ class examplePlugin {
     if(message.author.bot) return;
    if(message.channel.id == REALMCHATID){
     this.api.getLogger().info(`Discord ${message.author.username}: ${message.content}`)
-    this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"§l§3Discord §l§9[${message.author.username}]§r§f: ${message.content}\"}]}`)
+    this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"Discord [${message.author.username}§f]: ${message.content}\"}]}`)
    }
     })
 
@@ -106,13 +108,13 @@ class examplePlugin {
           await interaction.reply('Pong!');
         }
         else if(commandName === `whitelist`){
+        //  if(!interaction.member.roles.cache.some(r => r.permission.includes("ADMINISTATOR"))) return interaction.reply({ content: `You don't have the permissions to run this!`, ephemeral: true })
           new Authflow('', `.\\auth`, { relyingParty: 'http://xboxlive.com' }).getXboxToken().then(async (t: { userHash: any; XSTSToken: any; }) => {
             try{
             const  { data }  = await axios(`https://profile.xboxlive.com/users/gt(${interaction.getString(`gamertag`)})/profile/settings?settings=Gamertag`, {
               headers:{ 'x-xbl-contract-version': '2','Authorization': `XBL3.0 x=${t.userHash};${t.XSTSToken}`,"Accept-Language": "en-US" }
             })
             const xuid = data.profileUsers[0].id
-          if(!interaction.member.roles.cache.some(r => r.permissions.includes("ADMINISTATOR"))) return interaction.reply({ content: `You don't have the permissions to run this!`, ephemeral: true })
           interaction.reply({ content: `${interaction.options.getString('gamertag')} has been Whitelisted!`, ephemeral: true })
           fs.readFile('./plugins/Berp-DiscordMod-main/whitelist.json', 'utf8', (err,data)=>{
             var obj = JSON.parse(data)
@@ -133,14 +135,13 @@ class examplePlugin {
           })
         }
         else if(commandName === 'unwhitelist') {
-          if(!interaction.member.roles.cache.some(r => r.permission.includes("ADMINISTATOR"))) return interaction.reply({ content: `You don't have the permissions to run this!`, ephemeral: true })
+        //  if(!interaction.member.roles.cache.some(r => r.permission.includes("ADMINISTATOR"))) return interaction.reply({ content: `You don't have the permissions to run this!`, ephemeral: true })
           new Authflow('', `.\\auth`, { relyingParty: 'http://xboxlive.com' }).getXboxToken().then(async (t: { userHash: any; XSTSToken: any; }) => {
             try{
             const  { data }  = await axios(`https://profile.xboxlive.com/users/gt(${interaction.getString(`gamertag`)})/profile/settings?settings=Gamertag`, {
               headers:{ 'x-xbl-contract-version': '2','Authorization': `XBL3.0 x=${t.userHash};${t.XSTSToken}`,"Accept-Language": "en-US" }
             })
             const xuid = data.profileUsers[0].id
-          if(interaction.options.getString('gamertag') == undefined) return interaction.reply(`Could not find user "${interaction.options.getString('gamertag')}"!`)
           fs.readFile('./plugins/Berp-DiscordMod-main/whitelist.json', 'utf8', (err,data)=>{
             if(err) return interaction.reply("Could not read whitelist list! An unexpected error occurred! Try again.")
             var obj = JSON.parse(data)
@@ -183,7 +184,7 @@ class examplePlugin {
         }
       }).then((res)=>{
         if(!res.data.titles[0]){this.kickplayer(p,`Account On Private`)} 
-         if(BANNED.includes(res.data.titles[0].name.replace(new RegExp('Minecraft for ','g'),''))){this.kickplayer(p,`Recently Played An illigal Device`)}
+        if(BANNED.includes(res.data.titles[0].name.replace(new RegExp('Minecraft for ','g'),''))){this.kickplayer(p,`Recently Played An illigal Device`)}
         if(BANNED.includes(res.data.titles[0].name.replace(new RegExp('Minecraft for ','g'),''))){this.kickplayer(p,`Recently Played An illigal Device`)}
         if(BANNED.includes(res.data.titles[0].name.replace(new RegExp('Minecraft for ','g'),''))){this.kickplayer(p,`Recently Played An illigal Device`)}
       if(!res.data.titles[0].name.includes(`Minecraft`)){this.kickplayer(p,`Xbox Api Says Your Not Playing Minecraft`)}
@@ -197,7 +198,7 @@ this.api.getCommandManager().executeCommand(`Kick "${p.getXuid()}" ${r}`)
 const AUTOMODLOG = new MessageEmbed()
 .setTimestamp()
 .setColor(`#ff0000`)
-.setDescription(`UserName:${p.getName()}\nXUID:${p.getXuid()}\nDevice:${p.getDevice()}\nReason:${r}`)
+.setDescription(`UserName:${p.getName()}\nXUID\n${p.getXuid()}\nDevice:${p.getDevice()}\nReason:${r}`)
 client.channels.fetch(LOGID).then(async channel => await channel.send({embeds: [AUTOMODLOG]})).catch();
   }
     public onDisabled(): void {
