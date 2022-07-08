@@ -8,5 +8,6 @@
     "BANNED": ["Windows", "Android"],
     "LOGID":"Channel Id For AutoMod Logs", 
     "EMAIL":"Email For Auto Connect",
-    "REALMID":"Realm Id For Auot Connect" 
+    "REALMID":"Realm Id For Auot Connect",
+     "GAMERSCOREMAX": 0 
 }
