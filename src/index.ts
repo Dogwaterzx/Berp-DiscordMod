@@ -7,7 +7,7 @@ import axios from 'axios'
 const fs = require('fs')
 const { TOKEN, REALMCHATID, BANNED, LOGID, MOD, DISCORD, REALMID, EMAIL, GAMERSCOREMAX } = require('../config.json');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-if(DISCORD) {client.login(TOKEN)}
+client.login(TOKEN)
 process.on('uncaughtException',(e)=>{
   console.log("BeRP attempted to crash but error was caught.")
   console.log(e)
@@ -97,21 +97,38 @@ class examplePlugin {
     this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"Discord [${message.author.username}§f]: ${message.content}\"}]}`)
    }
     })
-
     client.on('interactionCreate', async interaction => {
       this.api.getCommandManager().executeCommand('list', async (res) => {
         if (!interaction.isCommand()) return;
-    
+
         const { commandName } = interaction;
       
         if (commandName === 'ping') {
           await interaction.reply('Pong!');
         }
-        else if(commandName === `whitelist`){
-        //  if(!interaction.member.roles.cache.some(r => r.permission.includes("ADMINISTATOR"))) return interaction.reply({ content: `You don't have the permissions to run this!`, ephemeral: true })
+      else if (commandName === 'list-players') {
+        for (const [, c] of this.api.getConnection().getConnectionManager().getConnections()) {
+          const pl = c.getPlugins().get(this.api.getConfig().name)
+          const api = pl.api
+        }
+        const prefix = '*-*';
+        const realmName = this.api.getConnection().realm.name
+        const playersOnline = res.output[0].paramaters.join('/');
+        const listPlayersOnline = res.output[1].paramaters[0].replace(/, /g, `\n${prefix} `);
+        
+        const response = `** ${playersOnline} Players Online**:\n${prefix} ${listPlayersOnline}`;
+        const fancyResponse = new MessageEmbed()
+          .setColor('#5a0cc0')
+          .setTitle(`${realmName}`)
+          .setDescription(`${response}`)
+        await interaction.reply({embeds: [fancyResponse]})
+      } else if (commandName === 'user') {
+        await interaction.reply('User info.');
+      }
+        else if(commandName === `realm-whitelist`){
+          if (!interaction.memberPermissions.has('ADMINISTRATOR')) return interaction.reply(`You Dont Have Permissions To Tun This`)
           new Authflow('', `.\\auth`, { relyingParty: 'http://xboxlive.com' }).getXboxToken().then(async (t: { userHash: any; XSTSToken: any; }) => {
-            try{
-            const  { data }  = await axios(`https://profile.xboxlive.com/users/gt(${interaction.getString(`gamertag`)})/profile/settings?settings=Gamertag`, {
+            const  { data }  = await axios(`https://profile.xboxlive.com/users/gt(${interaction.options.getString(`gamertag`)})/profile/settings?settings=Gamertag`, {
               headers:{ 'x-xbl-contract-version': '2','Authorization': `XBL3.0 x=${t.userHash};${t.XSTSToken}`,"Accept-Language": "en-US" }
             })
             const xuid = data.profileUsers[0].id
@@ -128,17 +145,12 @@ class examplePlugin {
               }
             })
           })
-        }
-        catch(err){
-     interaction.reply(`${interaction.getString(`gamertag`)} was not found`)
-        }
           })
         }
-        else if(commandName === 'unwhitelist') {
-        //  if(!interaction.member.roles.cache.some(r => r.permission.includes("ADMINISTATOR"))) return interaction.reply({ content: `You don't have the permissions to run this!`, ephemeral: true })
-          new Authflow('', `.\\auth`, { relyingParty: 'http://xboxlive.com' }).getXboxToken().then(async (t: { userHash: any; XSTSToken: any; }) => {
-            try{
-            const  { data }  = await axios(`https://profile.xboxlive.com/users/gt(${interaction.getString(`gamertag`)})/profile/settings?settings=Gamertag`, {
+        else if(commandName === 'realm-unwhitelist') {
+          if (!interaction.memberPermissions.has('ADMINISTRATOR')) return interaction.reply(`You Dont Have Permissions To Tun This`)
+            new Authflow('', `.\\auth`, { relyingParty: 'http://xboxlive.com' }).getXboxToken().then(async (t: { userHash: any; XSTSToken: any; }) => {
+            const  { data }  = await axios(`https://profile.xboxlive.com/users/gt(${interaction.options.getString(`gamertag`)})/profile/settings?settings=Gamertag`, {
               headers:{ 'x-xbl-contract-version': '2','Authorization': `XBL3.0 x=${t.userHash};${t.XSTSToken}`,"Accept-Language": "en-US" }
             })
             const xuid = data.profileUsers[0].id
@@ -160,8 +172,6 @@ class examplePlugin {
               }
             })
           })
-        }
-        catch{}
         })
         }
       })
