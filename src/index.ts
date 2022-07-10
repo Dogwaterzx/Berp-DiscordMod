@@ -87,7 +87,7 @@ class DiscordmodPlugin {
       this.api.getEventManager().on(`PlayerMessage`,async (userMessage)=>{
         if(!DISCORD) return;
         this.api.getLogger().info(`(REALM) ${userMessage.sender.getName()}: ${userMessage.message}`)
-        client.channels.fetch(REALMCHATID).then(async channel => await channel.send(`**${userMessage.sender.getName()}**: ${userMessage.message.replace(`@`,``}`)).catch();
+        client.channels.fetch(REALMCHATID).then(async channel => await channel.send(`**${userMessage.sender.getName()}**: ${userMessage.message.replace(`@`,``)}`)).catch();
       })
   client.on(`messageCreate`,(message)=>{
     if(!DISCORD) return;
