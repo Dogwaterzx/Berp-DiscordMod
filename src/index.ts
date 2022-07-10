@@ -87,14 +87,14 @@ class examplePlugin {
       this.api.getEventManager().on(`PlayerMessage`,async (userMessage)=>{
         if(!DISCORD) return;
         this.api.getLogger().info(`(REALM) ${userMessage.sender.getName()}: ${userMessage.message}`)
-        client.channels.fetch(REALMCHATID).then(async channel => await channel.send(`${userMessage.sender.getName()}: ${userMessage.message}`)).catch();
+        client.channels.fetch(REALMCHATID).then(async channel => await channel.send(`**${userMessage.sender.getName()}**: ${userMessage.message}`)).catch();
       })
   client.on(`messageCreate`,(message)=>{
     if(!DISCORD) return;
     if(message.author.bot) return;
    if(message.channel.id == REALMCHATID){
     this.api.getLogger().info(`(Discord) ${message.author.username}: ${message.content}`)
-    this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"Discord [${message.author.username}§f]: ${message.content}\"}]}`)
+    this.api.getCommandManager().executeCommand(`tellraw @a {\"rawtext\":[{\"text\":\"§l§9Discord §l§3[${message.author.username}]§r§f:${message.content}\"}]}`)
    }
     })
     client.on('interactionCreate', async interaction => {
@@ -220,7 +220,7 @@ this.api.getCommandManager().executeCommand(`Kick "${p.getXuid()}" ${r}`)
 const AUTOMODLOG = new MessageEmbed()
 .setTimestamp()
 .setColor(`#ff0000`)
-.setDescription(`UserName:${p.getName()}\nXUID\n${p.getXuid()}\nDevice:${p.getDevice()}\nReason:${r}`)
+.setDescription(`**UserName**:${p.getName()}\n**XUID**\n${p.getXuid()}\n**Device**:${p.getDevice()}\n**Reason**:${r}`)
 client.channels.fetch(LOGID).then(async channel => await channel.send({embeds: [AUTOMODLOG]})).catch();
   }
     public onDisabled(): void {
