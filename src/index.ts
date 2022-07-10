@@ -22,8 +22,8 @@ class DiscordmodPlugin {
 
     public onLoaded(): void {
       this.api.getLogger().info('Plugin loaded!')
-    this.api.autoConnect(EMAIL,REALMID.replace(`"`,``).replace(`"`,``))
-        this.api.autoReconnect(EMAIL,REALMID.replace(`"`,``).replace(`"`,``))
+    this.api.autoConnect(EMAIL,REALMID)
+        this.api.autoReconnect(EMAIL,REALMID)
     }
     public onEnabled(): void {
       this.api.getLogger().info('Plugin enabled!')
