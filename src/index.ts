@@ -13,7 +13,7 @@ process.on('uncaughtException',(e)=>{
   console.log(e)
 })
 
-class examplePlugin {
+class DiscordmodPlugin {
     private api: PluginApi
 
     constructor(api: PluginApi) {
@@ -228,4 +228,4 @@ client.channels.fetch(LOGID).then(async channel => await channel.send({embeds: [
     }
 }
 
-export = examplePlugin
+export = DiscordmodPlugin
